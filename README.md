@@ -1,4 +1,3 @@
-# CSS-458-Project
 # Simulating the Path of a Model Rocket Through Turbulent Wind
 
 If you are a model rocket enthusiast (especially one who has to operate with limited launching space), you are probably very familiar with the anxious feeling of not knowing where your rocket will land after it parachutes down. Will it land where you launched it? Will it land on a nearby road and get hit by a moving car? Or will it land in the nearby trees which you’ll have to climb to retrieve it.
