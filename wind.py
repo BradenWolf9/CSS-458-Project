@@ -17,14 +17,20 @@ heightMagScale = 2 # i.e if heightMagScale = 2, magnitude of vectors at top leve
 DIMS = 3
 ##############################################################################
 
+
 # creates wind field with each 3D cell set to the given wind vector
+# pre: user defined variables are set
+# post: 3D wind field is created with only initial wind vector in each cell
 def createWindField(initWindVector, windFieldSize, DIMS):
     wind = np.zeros((windFieldSize, windFieldSize, windFieldSize, DIMS))
     wind[:,:,:,:] = initWindVector[:]
     return wind
+
     
 # applies magnitude scaling to the height of the wind field
 # pre: 3D wind field is created with only initial wind vector in each cell
+# post: 3D wind is altered so magnitude of vectors scale with height according
+#       to given magnitude scaling
 def applyMagScale(wind, heightMagScale, windFieldSize):
     magStep = (heightMagScale - 1) / (windFieldSize - 1)
     # distance formula
@@ -37,12 +43,13 @@ def applyMagScale(wind, heightMagScale, windFieldSize):
         wind[height,:,:,:] *= 1 + height * magStep
     return wind
 
+
 # randomizes the wind vectors by using the given standard deviation and 
 # height scaling
 # pre: 3D wind field is created with height scaling applied
 # post: 3D wind field is altered to be random according to given standard
 #       deviation and standard deviation is scaled with height according to 
-#       the given scaling
+#       the given standard deviation scaling
 def applyStdDev(wind, windStdDev, heightStdDevScale, windFieldSize, DIMS):
     stdDevStep = ((windStdDev * heightStdDevScale) - windStdDev) / windFieldSize
     # for each height level
