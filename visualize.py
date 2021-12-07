@@ -93,6 +93,7 @@ if __name__ == "__main__":
         vx = 0
         vy = 20
         vz = 0
+        positions.append([x,y,z])
         while y >= 0:
             x += vx
             y += vy
