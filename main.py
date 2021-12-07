@@ -6,7 +6,7 @@ import numpy as N
 rocketMass = 5
 #                 z y x
 initWindVector = (4,2,6)
-windFieldSize = 500 # 100x100x100
+windFieldSize = 500 # windFieldSize * (1x1x1)
 initRocketAngle = (1,0,0)
 windStdDev = 1.0
 heightStdDevScale = 2 # i.e. if heightStdDevScale = 2, stddev at top level is twice stddev at bottom level
