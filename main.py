@@ -4,7 +4,7 @@ import numpy as N
 ##############################################################################
 # user defined variables #
 rocketMass = 5
-#                 z y x
+#                 z y x   z: height, y: north(+) south(-), x: east(+) west(-)
 initWindVector = (4,2,6)
 windFieldSize = 500 # windFieldSize * (1x1x1)
 initRocketAngle = (1,0,0)
