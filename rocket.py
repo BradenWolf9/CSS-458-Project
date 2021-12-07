@@ -10,11 +10,11 @@ windStdDev = 1.0
 heightStdDevScale = 2 # i.e. if heightStdDevScale = 2, stddev at top level is twice stddev at bottom level
 heightMagScale = 2 # i.e if heightMagScale = 2, magnitude of vectors at top level is twice the magnitude of vectors at bottom level
 
-totalEngineImpulse = 10 # in Newtons
+totalEngineImpulse = 5 # in Newtons
 engineDuration = 1.6 # in seconds
 timeSlice = .05 # in seconds
 
-initialPosition = (0,windFieldSize/2,windFieldSize/2)
+
 surfaceArea = .025398 #in m^2
 airDensity = 1.229 # in kg/m^3
 ##############################################################################
@@ -22,37 +22,35 @@ airDensity = 1.229 # in kg/m^3
 
 
 
-def launchRocket( initRocketAngle, wind, timeSlice, initPosition, surfaceArea):
+def launchRocket( initRocketAngle, wind, timeSlice, initPosition):
     
     propulsionAccel = getPropulsionAccel(rocketMass, initRocketAngle, totalEngineImpulse, engineDuration)
-    gravity = (-9.8, 0.0, 0.0) # in m/s^2
-    rocketPosition = initialPosition
-    rocketVector = (0.0,0.0,0.0)
+    gravity = N.array([-9.8, 0.0, 0.0]) # in m/s^2
+    rocketPosition = initPosition
+    rocketVector = N.array([0.0,0.0,0.0])
     timeElapsed = 0.0
-    rocketVector, rocketPosition = rocketStep(rocketVector, rocketPosition, propulsionAccel, wind, gravity)
-    timeElapsed = timeElapsed + timeSlice
+    pDeployed = False
+    positions = initPosition
     while(rocketPosition[0] >= 0.0):
         rocketVector, rocketPosition = rocketStep(rocketVector, rocketPosition, propulsionAccel, wind, gravity)
         timeElapsed = timeElapsed + timeSlice
+        if(rocketPosition[0] >= 0.0):
+            positions = N.vstack((positions,rocketPosition))
         if timeElapsed > engineDuration : 
             propulsionAccel = (0.0,0.0,0.0)
-        if rocketVector[0] < 0.0:
-            gravity = (-.98, 0.0, 0.0)
-            
+        if (rocketVector[0] < 0.0) and (pDeployed == False):
+            gravity = gravity / 10
+            pDeployed = True
+    return positions
     
 def rocketStep(rocketVector, rocketPosition, propulsionAccel, wind, gravity ):
-    newAccel = (gravity[0] + propulsionAccel[0] + getWindAccel(wind[int(rocketPosition[0]) , int(rocketPosition[1]) , int(rocketPosition[2]) , 0]),  \
+    newAccel = N.array([gravity[0] + propulsionAccel[0] + getWindAccel(wind[int(rocketPosition[0]) , int(rocketPosition[1]) , int(rocketPosition[2]) , 0]),  \
                 gravity[1] + propulsionAccel[1] + getWindAccel(wind[int(rocketPosition[0]) , int(rocketPosition[1]) , int(rocketPosition[2]) , 1]),   \
-                gravity[2] + propulsionAccel[2] + getWindAccel(wind[int(rocketPosition[0]) , int(rocketPosition[1]) , int(rocketPosition[2]) , 2]))
-    newRocketVector = (0.0,0.0,0.0)
-    newRocketVector[0] = rocketVector[0] + (newAccel[0] * timeSlice)
-    newRocketVector[1] = rocketVector[1] + (newAccel[1] * timeSlice)
-    newRocketVector[2] = rocketVector[2] + (newAccel[2] * timeSlice)
+                gravity[2] + propulsionAccel[2] + getWindAccel(wind[int(rocketPosition[0]) , int(rocketPosition[1]) , int(rocketPosition[2]) , 2])])
+    newRocketVector = rocketVector + (newAccel * timeSlice)
+
     
-    newPosition = (0.0,0.0,0.0)
-    newPosition[0] = rocketPosition[0] + newRocketVector[0]
-    newPosition[1] = rocketPosition[1] + newRocketVector[1]
-    newPosition[2] = rocketPosition[2] + newRocketVector[2]
+    newPosition = rocketPosition + newRocketVector
     return newRocketVector , newPosition
     
     
