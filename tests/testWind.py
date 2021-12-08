@@ -1,6 +1,6 @@
 # test createWindField to make sure the initial wind vector is in the wind
 # field
-def test_createWindField_windVector(initWindVector, windFieldSize):
+def test_createWindField_windVector():
     initWindVector = (2,43,483)
     windFieldSize = 52
     wind = createWindField(initWindVector, windFieldSize)
@@ -9,7 +9,7 @@ def test_createWindField_windVector(initWindVector, windFieldSize):
         
         
 # test createWindField to make sure the wind field is the correct size
-def test_createWindField_windFieldSize(initWindVector, windFieldSize):
+def test_createWindField_windFieldSize():
     initWindVector = (2,43,483)
     windFieldSize = 52
     wind = createWindField(initWindVector, windFieldSize)
