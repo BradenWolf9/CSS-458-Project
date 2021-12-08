@@ -19,7 +19,7 @@ def test_createWindField_windFieldSize():
         print("Failed to set the correct size of the wind field.")
 
      
-# executes all the tests for wind
+# executes all the tests
 def execute():
     test_createWindField_windVector()
     test_createWindField_windFieldSize()
