@@ -49,13 +49,14 @@ def test_applyStdDev_stdDev():
     windFieldSize = 100
     wind = W.createWindField(initWindVector, windFieldSize)
     windStdDev = 1
-    # std dev at bottom should be same at top with scaling factor of 1
-    heightStdDevScale = 1
+    # std dev at bottom should be same at top with scaling factor of 2
+    heightStdDevScale = 2
     wind = W.applyStdDev(wind, windStdDev, heightStdDevScale, windFieldSize)
-    less = np.less(wind, 3)
-    greater = np.greater(wind, 7)
-    # if any value in wind less than 3 or greater than 7
-    if less.any() or greater.any():
+
+    std_bottom = np.std(wind[0,:,:,:])
+    std_top = np.std(wind[-1,:,:,:])
+    # if standard deviation is not within 0.1
+    if not np.allclose(std_bottom, 1, 0.1) or not np.allclose(std_top, 2, 0.1):
         print("Failed to set standard deviation correctly.")
     
 
