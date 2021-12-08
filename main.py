@@ -6,6 +6,8 @@ import numpy as N
 rocketMass = 5
 #                 z y x
 initWindVector = (0,0,0)
+#                 z y x   z: height, y: north(+) south(-), x: east(+) west(-)
+initWindVector = (4,2,6)
 windFieldSize = 500 # windFieldSize * (1x1x1)
 initRocketAngle = (1,0,0)
 windStdDev = 0.0
