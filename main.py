@@ -21,8 +21,8 @@ tests = True # valid entries are True (runs tests) or False
 ##############################################################################
 
 if __name__ == '__main__':
-  if tests:
-    T.execute()
   wind = W.createWind(initWindVector, windFieldSize, heightMagScale, windStdDev, heightStdDevScale)
   positions = R.launchRocket(initRocketAngle, wind, timeSlice, initialPosition)
+  if tests:
+    T.execute()
   
