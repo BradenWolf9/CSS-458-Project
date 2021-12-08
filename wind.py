@@ -13,7 +13,7 @@ DIMS = 3
 # post: 3D wind field is created with only initial wind vector in each cell
 # return: 4D array. First element is height, second is north south, third is
 #         east west, fourth is 3D vector of height, north south, east west
-def createWindField(initWindVector, windFieldSize, DIMS):
+def createWindField(initWindVector, windFieldSize):
     wind = np.zeros((windFieldSize, windFieldSize, windFieldSize, DIMS))
     wind[:,:,:,:] = initWindVector[:]
     return wind
@@ -46,7 +46,7 @@ def applyMagScale(wind, heightMagScale, windFieldSize):
 #       the given standard deviation scaling
 # return: 4D array. First element is height, second is north south, third is
 #         east west, fourth is 3D vector of height, north south, east west
-def applyStdDev(wind, windStdDev, heightStdDevScale, windFieldSize, DIMS):
+def applyStdDev(wind, windStdDev, heightStdDevScale, windFieldSize):
     stdDevStep = ((windStdDev * heightStdDevScale) - windStdDev) / windFieldSize
     # for each height level
     for height in range(0,windFieldSize):
@@ -61,14 +61,14 @@ def applyStdDev(wind, windStdDev, heightStdDevScale, windFieldSize, DIMS):
 # return: 4D array. First element is height, second is north south, third is
 #         east west, fourth is 3D vector of height, north south, east west    
 def createWind(initWindVector, windFieldSize, heightMagScale, windStdDev, heightStdDevScale):
-    wind = createWindField(initWindVector, windFieldSize, DIMS)
+    wind = createWindField(initWindVector, windFieldSize)
     wind = applyMagScale(wind, heightMagScale, windFieldSize)
-    wind = applyStdDev(wind, windStdDev, heightStdDevScale, windFieldSize, DIMS)
+    wind = applyStdDev(wind, windStdDev, heightStdDevScale, windFieldSize)
     return wind
     
 
 if __name__ == '__main__':
-    wind = createWindField(initWindVector, windFieldSize, DIMS)
+    wind = createWindField(initWindVector, windFieldSize)
     wind = applyMagScale(wind, heightMagScale, windFieldSize)
-    wind = applyStdDev(wind, windStdDev, heightStdDevScale, windFieldSize, DIMS)
+    wind = applyStdDev(wind, windStdDev, heightStdDevScale, windFieldSize)
     print(wind)
