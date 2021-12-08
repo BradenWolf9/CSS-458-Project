@@ -1,6 +1,8 @@
 import rocket as R
-from wind import *  
+import wind as W  
+import tests as T
 import numpy as N
+
 ##############################################################################
 # user defined variables #
 rocketMass = 5
@@ -15,8 +17,11 @@ heightStdDevScale = 1 # i.e. if heightStdDevScale = 2, stddev at top level is tw
 heightMagScale = 1 # i.e if heightMagScale = 2, magnitude of vectors at top level is twice the magnitude of vectors at bottom level
 timeSlice = .05
 initialPosition = N.array([0,windFieldSize/2,windFieldSize/2])
+tests = true # valid entries are true (runs tests) or false
 ##############################################################################
 
 if __name__ == '__main__':
-  wind = createWind(initWindVector, windFieldSize, heightMagScale, windStdDev, heightStdDevScale)
+  wind = W.createWind(initWindVector, windFieldSize, heightMagScale, windStdDev, heightStdDevScale)
   positions = R.launchRocket(initRocketAngle, wind, timeSlice, initialPosition)
+  if tests:
+    T.execute()
