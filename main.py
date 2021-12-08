@@ -17,7 +17,7 @@ heightStdDevScale = 1 # i.e. if heightStdDevScale = 2, stddev at top level is tw
 heightMagScale = 1 # i.e if heightMagScale = 2, magnitude of vectors at top level is twice the magnitude of vectors at bottom level
 timeSlice = .05
 initialPosition = N.array([0,windFieldSize/2,windFieldSize/2])
-tests = true # valid entries are true (runs tests) or false
+tests = True # valid entries are True (runs tests) or False
 ##############################################################################
 
 if __name__ == '__main__':
