@@ -15,3 +15,9 @@ def test_createWindField_windFieldSize():
     wind = createWindField(initWindVector, windFieldSize)
     if len(wind) != 52:
         print("Failed to set the correct size of the wind field.")
+
+     
+# executes all the tests for wind
+def execute():
+    test_createWindField_windVector()
+    test_createWindField_windFieldSize()
