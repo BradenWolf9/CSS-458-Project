@@ -26,15 +26,16 @@ def createWindField(initWindVector, windFieldSize):
 # return: 4D array. First element is height, second is north south, third is
 #         east west, fourth is 3D vector of height, north south, east west
 def applyMagScale(wind, heightMagScale, windFieldSize):
+    if windFieldSize == 1:
+        pass
     magStep = (heightMagScale - 1) / (windFieldSize - 1)
-    # distance formula
-    origMag = math.sqrt(wind[0,0,0,0]**2 + wind[0,0,0,1]**2 + wind[0,0,0,2]**2)
     # for each height level
     for height in range(0, windFieldSize):
         # to get desired magnitude, multiply each element of vector by scale
         #   at the current height
         # scale at height level 0 equals 1
-        wind[height,:,:,:] *= 1 + height * magStep
+        wind[height,:,:,:] *= (1 + height * magStep)
+        
     return wind
 
 
@@ -50,9 +51,11 @@ def applyStdDev(wind, windStdDev, heightStdDevScale, windFieldSize):
     stdDevStep = ((windStdDev * heightStdDevScale) - windStdDev) / windFieldSize
     # for each height level
     for height in range(0,windFieldSize):
-        wind[height,:,:,:] += np.random.uniform(low=-((windStdDev + (stdDevStep * height)) * 2),
-                                                high=((windStdDev + (stdDevStep * height)) * 2),
-                                                size=(windFieldSize, windFieldSize, DIMS))
+        # apply a normal distribution
+        wind[height,:,:,:] += np.random.normal(
+            loc = 0, \
+            scale = windStdDev + stdDevStep * height, \
+            size = (windFieldSize, windFieldSize, DIMS))
     return wind
     
     
