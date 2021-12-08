@@ -1,4 +1,6 @@
 import wind as W
+import numpy as np
+
 
 # test createWindField to make sure the initial wind vector is in the wind
 # field
