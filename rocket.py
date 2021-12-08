@@ -47,10 +47,10 @@ def rocketStep(rocketVector, rocketPosition, propulsionAccel, wind, gravity ):
     newAccel = N.array([gravity[0] + propulsionAccel[0] + getWindAccel(wind[int(rocketPosition[0]) , int(rocketPosition[1]) , int(rocketPosition[2]) , 0]),  \
                 gravity[1] + propulsionAccel[1] + getWindAccel(wind[int(rocketPosition[0]) , int(rocketPosition[1]) , int(rocketPosition[2]) , 1]),   \
                 gravity[2] + propulsionAccel[2] + getWindAccel(wind[int(rocketPosition[0]) , int(rocketPosition[1]) , int(rocketPosition[2]) , 2])])
-    newRocketVector = rocketVector + (newAccel * timeSlice)
+    newRocketVector = rocketVector + (newAccel * timeSlice )
 
     
-    newPosition = rocketPosition + newRocketVector
+    newPosition = rocketPosition + (rocketVector * timeSlice) + (.5 * (newAccel * timeSlice * timeSlice))
     return newRocketVector , newPosition
     
     
