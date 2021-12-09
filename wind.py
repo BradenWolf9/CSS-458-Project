@@ -73,5 +73,4 @@ def createWind(initWindVector, windFieldSize, heightMagScale, windStdDev, height
 if __name__ == '__main__':
     wind = createWindField(initWindVector, windFieldSize)
     wind = applyMagScale(wind, heightMagScale, windFieldSize)
-    wind = applyStdDev(wind, windStdDev, heightStdDevScale, windFieldSize)
-    print(wind)
+    #wind = applyStdDev(wind, windStdDev, heightStdDevScale, windFieldSize)

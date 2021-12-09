@@ -8,33 +8,40 @@ Created on Mon Dec  6 17:21:51 2021
 
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
+import matplotlib.ticker as ticker
 
-def visHeightVsDisplacement2D(positions):
-    
-    # Get number of position vectors
-    num_positions = np.shape(positions)[0]
-    
+def visHeightVsDisplacement2D(simulations, startPos):
+
     # Create vector arrays
-    displacements = np.zeros((num_positions,))
-    heights = np.zeros((num_positions,))
-  
-    # Calculate displacement
-    for i in np.arange(num_positions):
-        # Get position vector
-        pos = positions[i]
-        
-        # Store displacement
-        displacements[i] = np.sqrt(pos[1] * pos[1] + pos[2] * pos[2])
-        
-        # Store height
-        heights[i] = pos[0]
-        
+    for positions in simulations:
+        # Get number of position vectors
+        num_positions = np.shape(positions)[0]
+        displacements = np.zeros((num_positions,))
+        heights = np.zeros((num_positions,))
+      
+        # Calculate displacement
+        for i in np.arange(num_positions):
+            # Get position vector
+            pos = positions[i]
+            
+            dnorth = pos[1] - startPos[1]
+            deast = pos[2] - startPos[2]
+            
+            # Store displacement
+            displacements[i] = np.sqrt(dnorth * dnorth + deast * deast)
+            
+            # Store height
+            heights[i] = pos[0] - startPos[0]
     
-    # Plot the height over displacement
-    plt.plot(displacements, heights)
+        # Plot the height over displacement
+        plt.plot(displacements, heights)
+        
+    # Label        
     plt.xlabel('Horizontal Displacement (meters)')
     plt.ylabel('Height (meters)')
     plt.title('Rocket Displacement vs Height')
+    plt.show()
 
 def visDisplacementChance2D(simulations, worldSize, graphUnits):
     # Create a grid
@@ -44,76 +51,123 @@ def visDisplacementChance2D(simulations, worldSize, graphUnits):
     for sim in range(len(simulations)):
         # Get ending positions
         pos = simulations[sim][-1]
-        north = round(pos[1] / worldSize * graphUnits)
+        north = round((1 - pos[1] / worldSize) * graphUnits)
         east = round(pos[2] / worldSize * graphUnits)
-        
-        print(north, east)
         
         # If it fits on board
         if north >= 0 and north < graphUnits:
             if east >= 0 and east < graphUnits:
                 grid[north][east] += 1
 
-                
-    print(grid)
-
     # Plot the heatmap
     plt.imshow(grid, cmap='inferno')
     plt.xticks([])
     plt.yticks([])
-    plt.xlabel('North/South')
-    plt.ylabel('East/West')
+    plt.ylabel('South   -    North')
+    plt.xlabel('West    -   East')
     plt.title('Landing Probability (top down view)')
 
 def visRocketPath3D(simulations, worldSize):
-    # Create a figure
-    fig = plt.figure()
- 
-    # syntax for 3-D projection
-    ax = plt.axes(projection ='3d')
+        # Create a figure
+        fig = plt.figure()
+     
+        # syntax for 3-D projection
+        ax = plt.axes(projection ='3d')
+        
+        plt.xlim([0, worldSize])
+        plt.ylim([0, worldSize])
+        
+        # For each simulation
+        for sim in range(len(simulations)):
+            # Plot rocket path
+            positions = simulations[sim]
+            ax.plot3D(worldSize - positions[:,1], positions[:,2], positions[:,0])
+        
+        ax.set_title('Rocket paths in 3D space')
+        plt.xlabel('North    -    South')
+        plt.ylabel('West   -   East')
+        plt.show()
+        plt.ion()
     
-    plt.xlim([-worldSize, worldSize])
-    plt.ylim([-worldSize, worldSize])
+def plotHeightVsDisplacement2D(simulations, startPos, ax):
+    # Create vector arrays
+    for positions in simulations:
+        # Get number of position vectors
+        num_positions = np.shape(positions)[0]
+        displacements = np.zeros((num_positions,))
+        heights = np.zeros((num_positions,))
+      
+        # Calculate displacement
+        for i in np.arange(num_positions):
+            # Get position vector
+            pos = positions[i]
+            
+            dnorth = pos[1] - startPos[1]
+            deast = pos[2] - startPos[2]
+            
+            # Store displacement
+            displacements[i] = np.sqrt(dnorth * dnorth + deast * deast)
+            
+            # Store height
+            heights[i] = pos[0] - startPos[0]
+    
+        # Plot the height over displacement
+        ax.plot(displacements, heights)
+        
+    # Label        
+    #ax.xlabel('Horizontal Displacement (meters)')
+    #ax.ylabel('Height (meters)')
+    #ax.title('Rocket Displacement vs Height')
+
+def plotDisplacementChance2D(simulations, worldSize, graphUnits, ax):
+    # Create a grid
+    grid = np.zeros((graphUnits, graphUnits))
+    
+    # For each simulation
+    for sim in range(len(simulations)):
+        # Get ending positions
+        pos = simulations[sim][-1]
+        north = round((1 - pos[1] / worldSize) * graphUnits)
+        east = round(pos[2] / worldSize * graphUnits)
+        
+        # If it fits on board
+        if north >= 0 and north < graphUnits:
+            if east >= 0 and east < graphUnits:
+                grid[north][east] += 1
+
+    # Plot the heatmap
+    ax.imshow(grid, cmap='inferno')
+    ax.xaxis.set_major_locator(ticker.NullLocator())
+    ax.yaxis.set_major_locator(ticker.NullLocator())
+    #plt.ylabel('South   -    North')
+    #plt.xlabel('West    -   East')
+    ax.set_title('Landing Probability (top down view)')
+
+def plotRocketPath3D(simulations, worldSize, ax):
+    
+    plt.xlim([0, worldSize])
+    plt.ylim([0, worldSize])
     
     # For each simulation
     for sim in range(len(simulations)):
         # Plot rocket path
         positions = simulations[sim]
-        ax.plot3D(positions[:,1], positions[:,2], positions[:,0])
+        ax.plot3D(worldSize - positions[:,1], positions[:,2], positions[:,0])
     
     ax.set_title('Rocket paths in 3D space')
-    plt.xlabel('North/South')
-    plt.ylabel('East/West')
-    plt.show()
-    plt.ion()
+    #plt.xlabel('North    -    South')
+    #plt.ylabel('West   -   East')
+    #plt.show()
+    #plt.ion()
 
-if __name__ == "__main__":
+def visAllPlots(simulations, worldSize, graphUnits, startPos):
+    # Create 2x2 sub plots
+    gs = gridspec.GridSpec(1, 2)
     
-    def genPositions(dx, dz):
-        # Generate fake positions
-        positions = []
-        north = 500
-        east = 500
-        height = 0
-        vnorth = 0
-        veast = 0
-        vheight = 20
-        positions.append([height,north,east])
-        while height >= 0:
-            north += vnorth
-            east += veast
-            height += vheight
-            vnorth += np.random.uniform(-dx, dx)
-            veast += np.random.uniform(-dz, dz)
-            vheight -= 5
-            if height >= 0:
-                positions.append([height,north,east])
-            
-        return np.array(positions)
+    fig = plt.figure()
     
+    ax2 = fig.add_subplot(gs[0, 0]) # row 0, col 1
+    plotDisplacementChance2D(simulations, worldSize, graphUnits, ax2)
     
-    #visHeightVsDisplacement2D(genPositions(5, 5))
-    
-    #visDisplacementChance2D([genPositions(5, 7) for i in range(500)], 1000, 100)
-    
-    #visRocketPath3D([genPositions(0, 7) for i in range(50)], 200)
+    ax3 = fig.add_subplot(gs[0, 1], projection='3d') # row 1, span all columns
+    plotRocketPath3D(simulations, worldSize, ax3)

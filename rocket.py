@@ -8,7 +8,7 @@ airDensity = 1.229 # in kg/m^3
 ##############################################################################
 
 
-def launchRocket( initRocketAngle, wind, timeSlice, initPosition):
+def launchRocket( initRocketAngle, wind, windStdDev, stdDevStep, timeSlice, initPosition):
     # Calculate propulsion acceleration vector
     propulsionAccel = getPropulsionAccel(rocketMass, initRocketAngle, totalEngineImpulse, engineDuration)
     # Get gravity acceleration vector (9.8m/s)
@@ -26,7 +26,7 @@ def launchRocket( initRocketAngle, wind, timeSlice, initPosition):
     # Until the rocket hits the ground
     while(rocketPosition[0] >= 0.0):
         # Update the rocket velocity & position
-        rocketVector, rocketPosition = rocketStep(rocketVector, rocketPosition, propulsionAccel, wind, gravity, timeSlice)
+        rocketVector, rocketPosition = rocketStep(rocketVector, rocketPosition, propulsionAccel, wind, windStdDev, stdDevStep, gravity, timeSlice)
         # Update timeElapsed
         timeElapsed = timeElapsed + timeSlice
         # If rocket is in the air, store the position 
@@ -45,11 +45,18 @@ def launchRocket( initRocketAngle, wind, timeSlice, initPosition):
     # Return simulation positions
     return positions
     
-def rocketStep(rocketVector, rocketPosition, propulsionAccel, wind, gravity, timeSlice ):
+def rocketStep(rocketVector, rocketPosition, propulsionAccel, wind, windStdDev, stdDevStep, gravity, timeSlice ):
+    # Wind vector
+    worldSize = wind.shape[0]
+    rocketY = max(0, min(worldSize - 1, int(rocketPosition[0])))
+    rocketN = max(0, min(worldSize - 1, int(rocketPosition[1])))
+    rocketE = max(0, min(worldSize - 1, int(rocketPosition[2])))
+    windSpeed = wind[rocketY, rocketN, rocketE]
+    
     # Get new acceleration using gravity, propulsion, and wind vector
-    newAccel = N.array([gravity[0] + propulsionAccel[0] + getWindAccel(wind[int(rocketPosition[0]) , int(rocketPosition[1]) , int(rocketPosition[2]) , 0]),  \
-                gravity[1] + propulsionAccel[1] + getWindAccel(wind[int(rocketPosition[0]) , int(rocketPosition[1]) , int(rocketPosition[2]) , 1]),   \
-                gravity[2] + propulsionAccel[2] + getWindAccel(wind[int(rocketPosition[0]) , int(rocketPosition[1]) , int(rocketPosition[2]) , 2])])
+    newAccel = N.array([gravity[0] + propulsionAccel[0] + getWindAccel(windSpeed, windStdDev, stdDevStep, int(rocketPosition[0]))[0],  \
+                gravity[1] + propulsionAccel[1] + getWindAccel(windSpeed, windStdDev, stdDevStep, int(rocketPosition[0]))[1],   \
+                gravity[2] + propulsionAccel[2] + getWindAccel(windSpeed, windStdDev, stdDevStep, int(rocketPosition[0]))[2]])
     
     
     # Update rocket velocity using physics equation Vf=Vi+a*t
@@ -70,6 +77,17 @@ def getPropulsionAccel(mass, angle, impulse, duration):
                                 angle[2] * avgPropAccel)
     return normalisedPropulsion
 
-def getWindAccel(windSpeed):
-    windForce = surfaceArea * airDensity * windSpeed
+def getWindAccel(windSpeed, windStdDev, stdDevStep, height):
+    
+    # Copy the wind speed vector
+    windSpeedCopy = N.copy(windSpeed)
+    
+    # Apply a random normal distribution (moved out of wind.py for efficiency)
+    windSpeedCopy += N.random.normal(
+            loc = 0, \
+            scale = windStdDev + stdDevStep * height, \
+            size = (3,))
+    
+    # Calculate the wind force
+    windForce = surfaceArea * airDensity * windSpeedCopy
     return windForce / rocketMass
