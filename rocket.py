@@ -36,7 +36,7 @@ def launchRocket( initRocketAngle, wind, windStdDev, stdDevStep, timeSlice, init
         adjEngineDuration = N.random.normal(engineDuration, engineDuration/10)
         
     # Adds in variability to parachute deploy time. Parachute will deploy somewhere between 0m/s and -5m/s
-    parachuteTrigger = -5 * N.random.random() + 5
+    parachuteTrigger = (-5 * N.random.random()) - 5
     
     # Until the rocket hits the ground
     while(rocketPosition[0] >= 0.0):
@@ -66,6 +66,9 @@ def rocketStep(rocketVector, rocketPosition, propulsionAccel, wind, windStdDev, 
     rocketY = max(0, min(worldSize - 1, int(rocketPosition[0])))
     rocketN = max(0, min(worldSize - 1, int(rocketPosition[1])))
     rocketE = max(0, min(worldSize - 1, int(rocketPosition[2])))
+    
+    #adds variability to the wind field based on a normal distribution
+    #moved out of wind.py for efficiency
     windSpeed = N.copy(wind[rocketY, rocketN, rocketE])
     windSpeed += N.random.normal(
             loc = 0, \
@@ -81,10 +84,13 @@ def rocketStep(rocketVector, rocketPosition, propulsionAccel, wind, windStdDev, 
     # Update rocket velocity using physics equation Vf=Vi+a*t
     newRocketVector = rocketVector + (newAccel * timeSlice )
     
-    #if the parachute is deployed, cap the downard speed at terminal velocity
+    #if the parachute is deployed, caps the downwars speed to the terminal velocity
     if pDeployed == True:
+        #terminal velocity
         if newRocketVector[0] < parachuteTerminalV:
             newRocketVector[0] = parachuteTerminalV
+        #caps lateral velocity of our rocket to the speed of the wind.
+        #rough approximation of air resistance pushing against the acceleration from wind
         if windSpeed[1] < 0:
             if newRocketVector[1] < windSpeed[1]:
                 newRocketVector[1] = windSpeed[1]
@@ -128,4 +134,5 @@ def getWindAccel(windSpeed):
 #returns the terminal velocity of a rocket according to given variables
 def getParachuteTerminalV():
     terminalV =  math.sqrt((2 * rocketMass * 9.8) / (airDensity * pSurfaceArea * .5))
+    #flips to negative to represent downward speed
     return -terminalV
