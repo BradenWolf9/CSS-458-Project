@@ -5,9 +5,9 @@ import numpy as N
 import visualize
 
 ##############################################################################
-initWindVector = (0,0,0) # Initial wind velocity (up, north, east), in meters/sec
+initWindVector = (0,1,0) # Initial wind velocity (up, north, east), in meters/sec
 windFieldSize = 300 # Length of one side of wind field, in meters
-windStdDev = 3 # Standard deviation of initial wind velocity (meters/sec)
+windStdDev = 1 # Standard deviation of initial wind velocity (meters/sec)
 heightStdDevScale = 3 # i.e. if heightStdDevScale = 2, stddev at top level is twice stddev at bottom level
 heightMagScale = 2 # i.e if heightMagScale = 2, magnitude of vectors at top level is twice the magnitude of vectors at bottom level
 

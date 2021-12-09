@@ -11,6 +11,7 @@ airDensity = 1.229 # in kg/m^3
 def launchRocket( initRocketAngle, wind, windStdDev, stdDevStep, timeSlice, initPosition):
     # Calculate propulsion acceleration vector
     propulsionAccel = getPropulsionAccel(rocketMass, initRocketAngle, totalEngineImpulse, engineDuration)
+    
     # Get gravity acceleration vector (9.8m/s)
     gravity = N.array([-9.8, 0.0, 0.0]) # in m/s^2
     
@@ -23,6 +24,14 @@ def launchRocket( initRocketAngle, wind, windStdDev, stdDevStep, timeSlice, init
     pDeployed = False
     positions = initPosition
     
+    # Adjusts engine duration to less reliable engines. Maxes out at engineDuration
+    adjEngineDuration = N.random.normal(engineDuration, engineDuration/10)
+    while adjEngineDuration > engineDuration:
+        adjEngineDuration = N.random.normal(engineDuration, engineDuration/10)
+        
+    # Adds in variability to parachute deploy time. Parachute will deploy somewhere between 0m/s and -5m/s
+    parachuteTrigger = -5 * N.random.random()
+    
     # Until the rocket hits the ground
     while(rocketPosition[0] >= 0.0):
         # Update the rocket velocity & position
@@ -34,11 +43,11 @@ def launchRocket( initRocketAngle, wind, windStdDev, stdDevStep, timeSlice, init
             positions = N.vstack((positions,rocketPosition))
             
         # If the rocket's engine runs out
-        if timeElapsed > engineDuration: 
+        if timeElapsed > adjEngineDuration: 
             propulsionAccel = (0.0,0.0,0.0) # Turn off acceleration by propulsion
         
         # If the rocket starts falling, deploy parachute
-        if (rocketVector[0] < 0.0) and (pDeployed == False):
+        if (rocketVector[0] < parachuteTrigger) and (pDeployed == False):
             gravity = gravity * 0.1 # Parachute acts as 90% negating force to gravity
             pDeployed = True
             
