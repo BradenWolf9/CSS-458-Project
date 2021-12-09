@@ -4,6 +4,7 @@ import math
 totalEngineImpulse = 5 # in Newton seconds
 engineDuration = .8 # in seconds
 rocketMass = .085 # Rocket mass, in kilograms
+rocketReliability = 10 # a higher number means the rocket fires for a duration close to engineDuration
 rLength = .747 # Rocket length in meters
 rDiameter = .034 # Rocket diameter in meters
 parachuteDiameter = .457 # Parachute Diameter in meters
@@ -31,9 +32,9 @@ def launchRocket( initRocketAngle, wind, windStdDev, stdDevStep, timeSlice, init
     parachuteTerminalV = getParachuteTerminalV()
     
     # Adjusts engine duration to less reliable engines. Maxes out at engineDuration
-    adjEngineDuration = N.random.normal(engineDuration, engineDuration/10)
+    adjEngineDuration = N.random.normal(engineDuration, engineDuration/rocketReliability)
     while adjEngineDuration > engineDuration:
-        adjEngineDuration = N.random.normal(engineDuration, engineDuration/10)
+        adjEngineDuration = N.random.normal(engineDuration, engineDuration/rocketReliability)
         
     # Adds in variability to parachute deploy time. Parachute will deploy somewhere between 0m/s and -5m/s
     parachuteTrigger = (-5 * N.random.random()) - 5
