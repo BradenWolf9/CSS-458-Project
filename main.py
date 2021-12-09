@@ -6,7 +6,7 @@ import visualize as V
 
 ##############################################################################
 # WIND PROPERTIES
-initWindVector = (0,1,0) # Initial wind velocity (up, north, east), in meters/sec
+initWindVector = (0,-2,2) # Initial wind velocity (up, north, east), in meters/sec
 windFieldSize = 300 # Length of one side of wind field, in meters
 windStdDev = 1 # Standard deviation of initial wind velocity (meters/sec)
 heightStdDevScale = 3 # i.e. if heightStdDevScale = 2, stddev at top level is twice stddev at bottom level

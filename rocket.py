@@ -2,7 +2,7 @@ import numpy as N
 import math
 ##############################################################################
 totalEngineImpulse = 5 # in Newton seconds
-engineDuration = 1.6 # in seconds
+engineDuration = .8 # in seconds
 rocketMass = .085 # Rocket mass, in kilograms
 rLength = .747 # Rocket length in meters
 rDiameter = .034 # Rocket diameter in meters
